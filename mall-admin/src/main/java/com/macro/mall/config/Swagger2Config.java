@@ -3,12 +3,11 @@ package com.macro.mall.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.builders.ParameterBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.ApiKey;
-import springfox.documentation.service.AuthorizationScope;
-import springfox.documentation.service.SecurityReference;
+import springfox.documentation.schema.ModelRef;
+import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
@@ -32,6 +31,7 @@ public class Swagger2Config {
                 .apis(RequestHandlerSelectors.basePackage("com.macro.mall.controller"))
                 .paths(PathSelectors.any())
                 .build()
+                .globalOperationParameters(setHeaderToken())
                 .securitySchemes(securitySchemes())
                 .securityContexts(securityContexts());
     }
@@ -77,4 +77,13 @@ public class Swagger2Config {
         result.add(new SecurityReference("Authorization", authorizationScopes));
         return result;
     }
+
+    private List<Parameter> setHeaderToken() {
+        ParameterBuilder tokenPar = new ParameterBuilder();
+        List<Parameter> pars = new ArrayList<>();
+        tokenPar.name("X-Auth-Token").description("token").modelRef(new ModelRef("string")).parameterType("header").required(false).build();
+        pars.add(tokenPar.build());
+        return pars;
+    }
+
 }
